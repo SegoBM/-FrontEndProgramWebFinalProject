@@ -1,0 +1,42 @@
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f5f5f5;
+}
+.login-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+.login-container h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+.btn-google {
+    background-color: #4285F4;
+    color: white;
+    border: none;
+}
+.btn-google:hover {
+    background-color: #3367D6;
+    color: white;
+}
+.img-Logo {
+    width: 300px;
+    height: 300px;
+    margin-bottom: 1rem;
+}
+.toggle-link {
+    cursor: pointer;
+    color: #4285F4;
+    text-decoration: underline;
+}
+
+.btn-editar{
+    color: white;
+}
