@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM fully loaded and parsed');
     fetchProviders(); // Obtener proveedores al cargar el DOM
 
+    
     // Agregar evento de submit al formulario de registro
     document.getElementById('registerForm').addEventListener('submit', async function(event) {
         event.preventDefault();
