@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Inventario</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+        }
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            background-color: #fff;
+            border-right: 1px solid #ddd;
+            padding-top: 60px; /* Añadir espacio superior para el botón de alternar */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, width 0.3s ease;
+        }
+        .sidebar.hidden {
+            width: 60px;
+        }
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            width: 100%;
+            transition: margin-left 0.3s ease;
+        }
+        .content.expanded {
+            margin-left: 60px;
+        }
+        .sidebar img {
+            display: block;
+            margin: 0 auto 20px;
+            width: 150px;
+        }
+        .sidebar.hidden img {
+            display: none;
+        }
+        .nav-link {
+            color: #333;
+            font-weight: 500;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        .nav-link:hover {
+            background-color: #f1f1f1;
+        }
+        .nav-link i {
+            margin-right: 10px;
+        }
+        .sidebar.hidden .nav-link {
+            justify-content: center;
+            padding: 15px 0;
+        }
+        .sidebar.hidden .nav-link i {
+            margin-right: 0;
+        }
+        .sidebar.hidden .nav-link span {
+            display: none;
+        }
+        .toggle-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: transparent;
+            color: #000000;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: left 0.3s ease;
+        }
+        .sidebar.hidden .toggle-btn {
+            left: 10px;
+        }
+        .alert-custom {
+            margin-left: 5%;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+            .content {
+                margin-left: 60px;
+                width: calc(100% - 60px);
+            }
+            .sidebar .nav-link span {
+                display: none;
+            }
+            .sidebar img {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación lateral -->
+    <div class="sidebar">
+        <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+        <img src="../Images/Logo.png" style="height: 220px; width: 220px;" alt="Logo de la Empresa">
+        <nav class="nav flex-column">
+            <a class="nav-link active" href="#"><i class="fas fa-home"></i><span>Inicio</span></a>
+            <a class="nav-link" href="Productos.html"><i class="fas fa-box"></i><span>Productos</span></a>
+            <a class="nav-link" href="#"><i class="fas fa-tags"></i><span>Proveedores</span></a>
+            <a class="nav-link" href="#"><i class="fas fa-truck"></i><span>Ventas</span></a>
+            <a class="nav-link" href="#"><i class="fas fa-chart-line"></i><span>Reportes</span></a>
+        </nav>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="content">
+        <!-- Mensaje de bienvenida -->
+        <div class="alert alert-primary alert-custom" role="alert">
+            ¡Bienvenido a Ventasys! Gestiona tus productos, ventas, proveedores y reportes de manera eficiente.
+        </div>
+
+        <!-- Gráficas de progreso y ventas -->
+        <div class="row">
+            <div class="col-md-6">
+                <canvas id="progressChart"></canvas>
+            </div>
+            <div class="col-md-6">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Tabla de datos -->
+        <table class="table mt-5">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>ID Transacción</th>
+                    <th>Origen</th>
+                    <th>Destino</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>23/10/2020 22:01</td>
+                    <td>tr-20201024-990416</td>
+                    <td>warehouse 2</td>
+                    <td>warehouse 1</td>
+                    <td>34500</td>
+                    <td>4500</td>
+                    <td>34500</td>
+                    <td><span class="status-completed">Completed</span></td>
+                    <td><button class="action-button">Action</button></td>
+                </tr>
+                <!-- Agrega más filas aquí según sea necesario -->
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            <a href="#">1</a>
+            <a href="#">2</a>
+            <a href="#">3</a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function toggleSidebar() {
+            if (window.innerWidth > 768) {
+                document.querySelector('.sidebar').classList.toggle('hidden');
+                document.querySelector('.content').classList.toggle('expanded');
+            }
+        }
+
+        function checkScreenWidth() {
+            if (window.innerWidth <= 768) {
+                document.querySelector('.sidebar').classList.add('hidden');
+                document.querySelector('.content').classList.add('expanded');
+            } else {
+                document.querySelector('.sidebar').classList.remove('hidden');
+                document.querySelector('.content').classList.remove('expanded');
+            }
+        }
+
+        window.addEventListener('resize', checkScreenWidth);
+        window.addEventListener('load', checkScreenWidth);
+
+        var ctx1 = document.getElementById('progressChart').getContext('2d');
+        var progressChart = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
+                datasets: [{
+                    label: 'Progreso',
+                    data: [65, 59, 80, 81, 56, 55],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+        var ctx2 = document.getElementById('salesChart').getContext('2d');
+        var salesChart = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
+                datasets: [{
+                    label: 'Ventas',
+                    data: [28, 48, 40, 19, 86, 27],
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,5 +1,5 @@
-const providersUrl = 'https://localhost:7177/api/Proveedores'; // URL para obtener los proveedores
-const productUrl = 'https://localhost:7177/api/Productos'; // URL para crear un nuevo producto
+const providersUrl = 'https://localhost:5017/api/Proveedores'; // URL para obtener los proveedores
+const productUrl = 'https://localhost:5017/api/Productos'; // URL para crear un nuevo producto
 
 document.addEventListener('DOMContentLoaded', async function() {
     await fetchProviders(); // Obtener proveedores al cargar el DOM
