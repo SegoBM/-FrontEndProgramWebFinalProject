@@ -1,30 +1,25 @@
-const providersUrl = 'https://localhost:5017/api/Proveedores'; // URL para obtener los proveedores
-const productUrl = 'https://localhost:5017/api/Productos'; // URL para crear un nuevo producto
+const providersUrl = 'https://localhost:7177/api/Proveedores'; // URL para obtener los proveedores
+const productUrl = 'https://localhost:7177/api/Productos'; // URL para crear un nuevo producto
 
 document.addEventListener('DOMContentLoaded', async function() {
     await fetchProviders(); // Obtener proveedores al cargar el DOM
     await fetchProducts(); // Obtener productos al cargar el DOM
     document.getElementById('productForm').addEventListener('submit', submitProductForm);
+    document.querySelector('[data-target="#productModal"]').addEventListener('click', clearProductForm); // Limpiar el formulario al abrir el modal
 });
 
 let providerMap = {}; // Mapeo de proveedores por ID
 
 async function fetchProviders() {
     try {
-        console.log('Fetching providers from:', providersUrl);
         const response = await fetch(providersUrl);
-        console.log('Response status:', response.status); // Agregar estado de la respuesta
         if (!response.ok) {
             throw new Error('Error al obtener los proveedores');
         }
         const providers = await response.json();
-        console.log('Providers fetched:', providers);
-        
         providers.forEach(provider => {
-            console.log(`ID del proveedor: ${provider.proveedorId}, Nombre: ${provider.nombre}`);
             providerMap[provider.proveedorId] = provider.nombre; // Guardar en el mapeo
         });
-
         renderProviders(providers);
     } catch (error) {
         console.error('Error:', error);
@@ -34,39 +29,30 @@ async function fetchProviders() {
 
 function renderProviders(providers) {
     const providerSelect = document.getElementById('productProviderId');
-    if (!providerSelect) {
-        console.error('Element with ID productProviderId not found');
-        return;
-    }
     providerSelect.innerHTML = '';
 
     const defaultOption = document.createElement('option');
-    defaultOption.value = ''; // Valor vacío
-    defaultOption.textContent = 'Seleccionar el proveedor'; // Leyenda predeterminada
-    defaultOption.disabled = true; // Deshabilitar opción para que no se pueda seleccionar
-    defaultOption.selected = true; // Hacerla seleccionada por defecto
+    defaultOption.value = '';
+    defaultOption.textContent = 'Seleccionar el proveedor';
+    defaultOption.disabled = true;
+    defaultOption.selected = true;
     providerSelect.appendChild(defaultOption);
     
     providers.forEach(provider => {
         const option = document.createElement('option');
-        option.value = provider.proveedorId; // ID del proveedor
-        option.textContent = provider.nombre; // Nombre del proveedor
+        option.value = provider.proveedorId;
+        option.textContent = provider.nombre;
         providerSelect.appendChild(option);
     });
-    console.log('Providers rendered in select element');
 }
 
 async function fetchProducts() {
     try {
-        console.log('Fetching products from:', productUrl);
         const response = await fetch(productUrl);
-        console.log('Response status:', response.status); // Agregar estado de la respuesta
         if (!response.ok) {
             throw new Error('Error al obtener los productos');
         }
         const products = await response.json();
-        console.log('Products fetched:', products);
-
         renderProducts(products);
     } catch (error) {
         console.error('Error:', error);
@@ -76,10 +62,6 @@ async function fetchProducts() {
 
 function renderProducts(products) {
     const productTableBody = document.getElementById('productTableBody');
-    if (!productTableBody) {
-        console.error('Element with ID productTableBody not found');
-        return;
-    }
     productTableBody.innerHTML = '';
 
     products.forEach(product => {
@@ -92,17 +74,16 @@ function renderProducts(products) {
             <td>${product.cantidad}</td>
             <td>${providerName}</td>
             <td>
-                <button class="btn btn-warning btn-sm btn-editar">Editar</button>
-                <button class="btn btn-danger btn-sm">Eliminar</button>
+                <button class="btn btn-warning btn-sm btn-edit" onclick="editProduct('${product.productoId}')">Editar</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteProduct('${product.productoId}')">Eliminar</button>
             </td>
         `;
         productTableBody.appendChild(row);
     });
-    console.log('Products rendered in table');
 }
 
 async function submitProductForm(event) {
-    event.preventDefault(); // Evita el comportamiento predeterminado del formulario
+    event.preventDefault();
 
     const nombre = document.getElementById('productName').value;
     const descripcion = document.getElementById('productDescription').value;
@@ -115,8 +96,11 @@ async function submitProductForm(event) {
         descripcion: descripcion,
         precio: precio,
         cantidad: cantidad,
-        proveedorId: proveedorId // Asegurarse de enviar solo el ID del proveedor
+        proveedorId: proveedorId,
+        isUpdate: !!document.getElementById('productId').value // Indica si es una actualización
     };
+
+    console.log('Datos a enviar:', producto);
 
     try {
         const response = await fetch(productUrl, {
@@ -128,18 +112,69 @@ async function submitProductForm(event) {
         });
 
         const result = await response.json();
-        console.log(result);
-
         if (response.ok) {
             alert('Producto registrado con éxito');
             document.getElementById('productForm').reset();
             $('#productModal').modal('hide');
-            fetchProducts(); // Actualizar la tabla de productos
+            fetchProducts();
         } else {
             alert('Error al registrar el producto: ' + result.title);
         }
     } catch (error) {
         console.error('Error:', error);
         alert('Error al registrar el producto');
+    }
+}
+
+function clearProductForm() {
+    document.getElementById('productId').value = '';
+    document.getElementById('productName').value = '';
+    document.getElementById('productDescription').value = '';
+    document.getElementById('productPrice').value = '';
+    document.getElementById('productQuantity').value = '';
+    document.getElementById('productProviderId').value = '';
+}
+
+function editProduct(productId) {
+    console.log('editProduct called with productId:', productId); // Mensaje de depuración
+    fetch(`${productUrl}/${productId}`)
+        .then(response => response.json())
+        .then(product => {
+            document.getElementById('productId').value = product.productoId;
+            document.getElementById('productName').value = product.nombre;
+            document.getElementById('productDescription').value = product.descripcion;
+            document.getElementById('productPrice').value = product.precio;
+            document.getElementById('productQuantity').value = product.cantidad;
+            document.getElementById('productProviderId').value = product.proveedorId;
+
+            $('#productModal').modal('show');
+        })
+        .catch(error => {
+            console.error('Error al cargar el producto:', error);
+            alert('Error al cargar el producto');
+        });
+}
+
+async function deleteProduct(productId) {
+    console.log('deleteProduct called with productId:', productId); // Mensaje de depuración
+    if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${productUrl}/${productId}`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            alert('Producto eliminado con éxito');
+            fetchProducts();
+        } else {
+            const result = await response.json();
+            alert('Error al eliminar el producto: ' + result.title);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al eliminar el producto');
     }
 }

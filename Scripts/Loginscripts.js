@@ -1,4 +1,4 @@
-const providersUrl = 'https://localhost:5017/api/Proveedores'; // URL para obtener los proveedores
+const providersUrl = 'https://localhost:7177/api/Proveedores'; // URL para obtener los proveedores
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM fully loaded and parsed');
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const rol = document.getElementById('userType').value;
 
         try {
-            const response = await fetch('https://localhost:5017/api/Usuarios', {
+            const response = await fetch('https://localhost:7177/api/Usuarios', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const contraseña = document.getElementById('loginPassword').value;
 
         try {
-            const response = await fetch('https://localhost:5017/api/Usuarios/login', {
+            const response = await fetch('https://localhost:7177/api/Usuarios/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
