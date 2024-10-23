@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (response.ok) {
                 alert('Inicio de sesión exitoso');
-                window.location.href = 'Productos.html'; // Redirigir a otra página
+                window.location.href = 'index.html'; // Redirigir a otra página
             } else {
                 alert('Error al iniciar sesión: ' + result.message);
             }

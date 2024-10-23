@@ -84,40 +84,59 @@ function renderProducts(products) {
 
 async function submitProductForm(event) {
     event.preventDefault();
-
+    const productId = document.getElementById('productId').value;
     const nombre = document.getElementById('productName').value;
     const descripcion = document.getElementById('productDescription').value;
     const precio = parseFloat(document.getElementById('productPrice').value);
     const cantidad = parseInt(document.getElementById('productQuantity').value);
     const proveedorId = document.getElementById('productProviderId').value;
 
+    // Crear el objeto producto sin el campo productoId
     const producto = {
         nombre: nombre,
         descripcion: descripcion,
         precio: precio,
         cantidad: cantidad,
-        proveedorId: proveedorId,
-        isUpdate: !!document.getElementById('productId').value // Indica si es una actualización
+        proveedorId: proveedorId
     };
+
+    // Incluir el campo productoId solo si se está actualizando un producto existente
+    if (productId) {
+        producto.productoId = productId;
+    }
 
     console.log('Datos a enviar:', producto);
 
     try {
-        const response = await fetch(productUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(producto)
-        });
+        let response;
+        if (productId) {
+            // Actualizar producto existente
+            response = await fetch(`${productUrl}/${productId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(producto)
+            });
+        } else {
+            // Crear nuevo producto
+            response = await fetch(productUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(producto)
+            });
+        }
 
-        const result = await response.json();
         if (response.ok) {
-            alert('Producto registrado con éxito');
+            alert(productId ? 'Producto actualizado con éxito' : 'Producto registrado con éxito');
             document.getElementById('productForm').reset();
             $('#productModal').modal('hide');
             fetchProducts();
         } else {
+            const result = await response.json();
+            console.error('Error al registrar el producto:', result);
             alert('Error al registrar el producto: ' + result.title);
         }
     } catch (error) {
@@ -138,7 +157,12 @@ function clearProductForm() {
 function editProduct(productId) {
     console.log('editProduct called with productId:', productId); // Mensaje de depuración
     fetch(`${productUrl}/${productId}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al obtener el producto');
+            }
+            return response.json();
+        })
         .then(product => {
             document.getElementById('productId').value = product.productoId;
             document.getElementById('productName').value = product.nombre;
