@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD de Proveedores</title>
+    <title>CRUD de Clientes</title>
     
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/Styles/styles.css">
@@ -138,23 +138,23 @@
             <!-- Contenido principal -->
             <div class="content col">
                 <div class="container">
-                    <h1 class="text-center">Proveedores</h1>
+                    <h1 class="text-center">Clientes</h1>
                     <div class="row">
                         <div class="col-md-12">
-                            <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#providerModal">Agregar Proveedor</button>
+                            <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#clientModal">Agregar Cliente</button>
                             <div class="table-container table-responsive">
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
                                             <th>Nombre</th>
-                                            <th>Teléfono</th>
                                             <th>Correo</th>
+                                            <th>Teléfono</th>
                                             <th>Dirección</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="providerTableBody">
-                                        <!-- Las filas de proveedores se generarán dinámicamente -->
+                                    <tbody id="clientTableBody">
+                                        <!-- Las filas de clientes se generarán dinámicamente -->
                                     </tbody>
                                 </table>
                             </div>
@@ -162,34 +162,34 @@
                     </div>
                 </div>
 
-                <!-- Modal para agregar/editar proveedor -->
-                <div class="modal fade" id="providerModal" tabindex="-1" aria-labelledby="providerModalLabel" aria-hidden="true">
+                <!-- Modal para agregar/editar cliente -->
+                <div class="modal fade" id="clientModal" tabindex="-1" aria-labelledby="clientModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="providerModalLabel">Agregar Proveedor</h5>
+                                <h5 class="modal-title" id="clientModalLabel">Agregar Cliente</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form id="providerForm">
-                                    <input type="hidden" id="providerId">
+                                <form id="clientForm">
+                                    <input type="hidden" id="clientId">
                                     <div class="form-group">
-                                        <label for="providerName">Nombre</label>
-                                        <input type="text" class="form-control" id="providerName" required>
+                                        <label for="clientName">Nombre</label>
+                                        <input type="text" class="form-control" id="clientName" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="providerPhone">Teléfono</label>
-                                        <input type="text" class="form-control" id="providerPhone" required>
+                                        <label for="clientEmail">Correo</label>
+                                        <input type="email" class="form-control" id="clientEmail" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="providerEmail">Correo</label>
-                                        <input type="email" class="form-control" id="providerEmail" required>
+                                        <label for="clientPhone">Teléfono</label>
+                                        <input type="text" class="form-control" id="clientPhone" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="providerAddress">Dirección</label>
-                                        <input type="text" class="form-control" id="providerAddress" required>
+                                        <label for="clientAddress">Dirección</label>
+                                        <input type="text" class="form-control" id="clientAddress" required>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Guardar</button>
                                 </form>
@@ -204,7 +204,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="../Scripts/ProveedorScript.js"></script>
+    <script src="../Scripts/ClienteScript.js"></script>
     <script>
     function toggleSidebar() {
         if (window.innerWidth > 768) {

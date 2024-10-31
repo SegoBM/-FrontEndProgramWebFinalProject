@@ -70,7 +70,7 @@ function renderProducts(products) {
         row.innerHTML = `
             <td>${product.nombre}</td>
             <td>${product.descripcion}</td>
-            <td>${product.precio}</td>
+            <td>$ ${product.precio}</td>
             <td>${product.cantidad}</td>
             <td>${providerName}</td>
             <td>
