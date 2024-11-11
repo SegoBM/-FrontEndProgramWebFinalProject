@@ -1,12 +1,24 @@
-const providersUrl = 'https://localhost:7177/api/Proveedores'; // URL para obtener los proveedores
+class AuthApp {
+    constructor() {
+        this.providersUrl = 'https://localhost:7177/api/Proveedores';
+        this.init();
+        window.toggleForms = this.toggleForms.bind(this); 
+    }
 
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM fully loaded and parsed');
-    fetchProviders(); // Obtener proveedores al cargar el DOM
+    init() {
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM fully loaded and parsed');
+            this.fetchProviders();
+            this.addEventListeners();
+        });
+    }
 
-    
-    // Agregar evento de submit al formulario de registro
-    document.getElementById('registerForm').addEventListener('submit', async function(event) {
+    addEventListeners() {
+        document.getElementById('registerForm').addEventListener('submit', (event) => this.registerUser(event));
+        document.getElementById('loginForm').addEventListener('submit', (event) => this.loginUser(event));
+    }
+
+    async registerUser(event) {
         event.preventDefault();
         const nombre = document.getElementById('username').value;
         const contraseña = document.getElementById('password').value;
@@ -30,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (response.ok) {
                 alert('Usuario registrado con éxito');
-                toggleForms(); // Cambiar a formulario de inicio de sesión
+                this.toggleForms();
             } else {
                 alert('Error al registrar el usuario: ' + result.title);
             }
@@ -38,10 +50,9 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error:', error);
             alert('Error al registrar el usuario');
         }
-    });
+    }
 
-    // Agregar evento de submit al formulario de inicio de sesión
-    document.getElementById('loginForm').addEventListener('submit', async function(event) {
+    async loginUser(event) {
         event.preventDefault();
         const nombre = document.getElementById('loginUsername').value;
         const contraseña = document.getElementById('loginPassword').value;
@@ -63,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (response.ok) {
                 alert('Inicio de sesión exitoso');
-                window.location.href = 'index.html'; // Redirigir a otra página
+                window.location.href = 'index.html';
             } else {
                 alert('Error al iniciar sesión: ' + result.message);
             }
@@ -71,30 +82,30 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error:', error);
             alert('Error al iniciar sesión');
         }
-    });
-});
+    }
 
-// Función para obtener proveedores
-async function fetchProviders() {
-    try {
-        const response = await fetch(providersUrl);
-        const providers = await response.json();
-        console.log(providers);
-        // Aquí puedes agregar código para manejar los proveedores obtenidos
-    } catch (error) {
-        console.error('Error al obtener proveedores:', error);
+    async fetchProviders() {
+        try {
+            const response = await fetch(this.providersUrl);
+            const providers = await response.json();
+            console.log(providers);
+            // Aquí puedes agregar código para manejar los proveedores obtenidos
+        } catch (error) {
+            console.error('Error al obtener proveedores:', error);
+        }
+    }
+
+    toggleForms() {
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        if (loginForm.style.display === 'none') {
+            loginForm.style.display = 'block';
+            registerForm.style.display = 'none';
+        } else {
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'block';
+        }
     }
 }
 
-// Función para alternar entre formularios de inicio de sesión y registro
-function toggleForms() {
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-    if (loginForm.style.display === 'none') {
-        loginForm.style.display = 'block'; // Mostrar formulario de inicio de sesión
-        registerForm.style.display = 'none'; // Ocultar formulario de registro
-    } else {
-        loginForm.style.display = 'none'; // Ocultar formulario de inicio de sesión
-        registerForm.style.display = 'block'; // Mostrar formulario de registro
-    }
-}
+const authApp = new AuthApp();
